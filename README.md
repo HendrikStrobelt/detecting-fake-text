@@ -73,6 +73,7 @@ re-compilation of front-end:
 ```
 
 ##License
+
 Apache 2
 
 (c) 2019 by Hendrik Strobelt, Sebastian Gehrmann, Alexander M. Rush
