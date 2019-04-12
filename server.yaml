@@ -1,0 +1,61 @@
+swagger: '2.0'
+info:
+  title: GLTR API
+  version: "0.1"
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /api
+
+paths:
+
+  /all_projects:
+    get:
+      tags:
+        - all
+      summary: information about all projects and sources available
+      operationId: server.get_all_projects
+      responses:
+        200:
+          description: return list of projects
+          schema:
+            type: array
+            items:
+              type: object
+
+  /analyze:
+    post:
+      tags:
+        - all
+      summary: analyze text
+      operationId: server.analyze
+      parameters:
+        - in: body
+          name: analyze_request
+          description: request analyze
+          schema:
+            $ref: "#/definitions/AnalyzeRequest"
+
+      responses:
+        200:
+          description: return translation
+          schema:
+            type: object
+
+
+
+
+definitions:
+
+  AnalyzeRequest:
+    type: object
+    required:
+      - project
+      - text
+    properties:
+      project:
+        type: string
+      text:
+        type: string

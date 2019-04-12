@@ -1,0 +1,7 @@
+pytorch-pretrained-bert>=0.6.1
+torch>=1.0
+numpy
+connexion[swagger-ui]
+flask
+PyYaml
+flask_cors

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>GLTR (glitter) v0.5 </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="#" />
+    <link rel="stylesheet" type="text/css" href="start.css">
+    <!--<link rel="stylesheet" type="text/css" href="vendor.css">-->
+    <meta name="twitter:card" content="summary_large_image">
+    <!--<meta name="twitter:site" content="@nytimes">-->
+    <!--<meta name="twitter:creator" content="@SarahMaslinNir">-->
+    <meta name="twitter:title" content="GLTR from MIT-IBM Watson AI Lab and HarvardNLP">
+    <meta name="twitter:description" content="This demo enables forensic inspection of the visual footprint 
+          of a language model on input text to detect whether a text could be real or fake.">
+    <meta name="twitter:image" content="http://gltr.io/overview.png">
+
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-135666388-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-135666388-1');
+    </script>
+
+
+</head>
+
+<body>
+
+    <!--<div class="navbar">-->
+    <!--<div class="navbarContent">-->
+    <!--<span class="navbarTitle">  </span>-->
+    <!--<span>project:</span>-->
+    <!--<select class="custom-select" id="project_selector">-->
+    <!--<option selected>Select Project</option>-->
+    <!--&lt;!&ndash;<option value="1">One</option>&ndash;&gt;-->
+    <!--&lt;!&ndash;<option value="2">Two</option>&ndash;&gt;-->
+    <!--&lt;!&ndash;<option value="3">Three</option>&ndash;&gt;-->
+    <!--</select>-->
+    <!--<span>layer:</span>-->
+    <!--<select class="custom-select" id="layer_selector">-->
+    <!--&lt;!&ndash;<option value="0">0</option>&ndash;&gt;-->
+
+    <!--</select>-->
+    <!--<button id="sidebar_btn" class="onoffswitch on"-->
+    <!--style="right:5px;position: absolute;padding: 5px;">units-->
+    <!--</button>-->
+    <!--<i class="fas fa-eye" style="color: white"></i>-->
+    <!--&lt;!&ndash;<span>images:</span>&ndash;&gt;-->
+    <!--<label for='image_select' style="padding-right: 5px;">images:</label>-->
+    <!--<input id='image_select' type="text" value="42" style="width: 200px;">-->
+    <!--&lt;!&ndash;<span>tgt:</span>&ndash;&gt;-->
+    <!--&lt;!&ndash;<input id='target_select' type="number" value="0">&ndash;&gt;-->
+    <!--&lt;!&ndash;<button id="do_btn" class="btn">query</button>&ndash;&gt;-->
+
+    <!--<label for="input_zoom">zoom:</label>-->
+    <!--<input type="number" id="input_zoom" step=".1" value="1.2">-->
+
+    <!--<label for="input_opacity">opacity:</label>-->
+    <!--<input type="range" id="input_opacity" class='slider'-->
+    <!--value=".3" min="0" max=".5" step=".05">-->
+
+    <!--&lt;!&ndash;<span>ablate first:</span>&ndash;&gt;-->
+    <!--&lt;!&ndash;<input id='noAb' type="number" value="20">&ndash;&gt;-->
+
+
+    <!--</div>-->
+    <!--</div>-->
+
+
+    <div id="header">
+        <div id="headertext">
+            <span style="font-weight: bold;">G</span>iant <span style="font-weight: bold;">L</span>anguage model <span
+                style="font-weight: bold;">T</span>est <span style="font-weight: bold;">R</span>oom
+
+        </div>
+    </div>
+    <div id="loader" style="top:50px;opacity:1;transition-property: opacity; transition-duration: .5s;"> Loading...
+    </div>
+    <div class="main_frame" style="opacity:0;transition-property: opacity; transition-duration: 1s;">
+
+        <div class="floating_content">
+            <div> The GLTR demo enables forensic inspection of the visual footprint of a
+                language model on input text to detect whether a text could be real or fake. It is a collaborative
+                effort between
+                <a href='http://hendrik.strobelt.com' target="_blank">Hendrik Strobelt</a>, <a
+                    href="https://scholar.harvard.edu/gehrmann/home" target="_blank">Sebastian Gehrmann</a>,
+                and <a href="http://nlp.seas.harvard.edu/rush.html" target="_blank">Alexander Rush</a> from the <a
+                    href="https://mitibmwatsonailab.mit.edu/" target="_blank" style="font-weight:700">MIT-IBM Watson AI
+                    lab</a>
+                and <a href="http://nlp.seas.harvard.edu/" target="_blank" style="font-weight:700">Harvard NLP</a>.
+            </div>
+            <p>Please read the detailed <a href='http://gltr.io'>intro about GLTR</a>.
+            </p>
+            <p>Each text is analyzed by how likely each word would be the predicted word given
+                the context to the left.
+                If the actual used word would be in the Top 10 predicted words the background is colored green, for Top
+                100 in yellow,
+                Top 1000 red, otherwise violet. Try some sample texts from below and see for yourself if you can spot
+                the
+                difference between machine generated text and human generated text or try your own. (Tip: hover over
+                the words for more detail) </p>
+            <p>
+                The histograms show some statistic about the text: Frac(p) describes the fraction of probability
+                for the actual word divided by the maximum probability of any word at this position.
+                The Top 10 entropy describes the entropy along the top 10 results for each word.
+            </p>
+
+            <h2>Test-Model: <span id="model_name"></span></h2>
+            <div class='demo' style="font-weight:bold;">Quick start - select a demo text:</div>
+            <div class="demos"></div>
+
+            <!-- INPUT TEXT -->
+            <!--        <div id="text-input">-->
+            <div style="padding-top: 10px;"><span class="demo">or </span>enter a text:</div>
+            <!--        <textarea id="test_text" rows="10" cols="80">The cat was playing in the garden.</textarea>-->
+            <textarea id="test_text" style="width: 100%;height: 50px;">The cat was playing in the garden.</textarea>
+            <br>
+            <button id="submit_text_btn"> analyze</button>
+            <div class="loadersmall" style="margin-left:1pt;display: none;"></div>
+
+
+            <div id="all_result" style="opacity:0;transition-duration: .5s;display: none;">
+
+                <div id="stats" style="text-align:center;">
+                    <div style="display:inline-block;text-align: center">
+                        <div>top k count</div>
+                        <svg id="stats_top_k"></svg>
+                    </div>
+                    <div style="display:inline-block;text-align: center">
+                        <div>frac(p) histogram</div>
+                        <svg id="stats_frac"></svg>
+                    </div>
+                    <div style="display:inline-block;text-align: center">
+                        <div>top 10 entropy(p) histogram</div>
+                        <svg id="stats_entropy"></svg>
+                    </div>
+                </div>
+                <div id="#res" style="margin-top: 10px;">
+
+                    <div style="display: inline-block;padding-right: 20px;">
+                        <button id="mode_topk" class="btn_mode selected"> Top K
+                        </button>
+                        <!-- <button id="mode_diff_p" class="btn_mode"> Diff P</button> -->
+                        <button id="mode_frac_p" class="btn_mode"> Frac P</button>
+                    </div>
+                    <div style="display: inline-block;">
+                        Colors (top k):
+                        <div
+                            style="width: 15px; height: 15px;background-color: #ADFF80; display: inline-block;position: relative; top:3px;">
+                        </div>
+                        <input value=10 type="number" id="color1" class='colorThreshold' style="width:50px;" />
+                        <div
+                            style="width: 15px; height: 15px;background-color: #FFEA80; display: inline-block;position: relative;  top:3px;">
+                        </div>
+                        <input value=100 type="number" id="color2" class='colorThreshold' style="width:50px;" />
+                        <div
+                            style="width: 15px; height: 15px;background-color: #FF9280; display: inline-block;position: relative;  top:3px;">
+                        </div>
+                        <input value=1000 type="number" id="color3" class='colorThreshold' style="width:50px;" />
+                        <div
+                            style="width: 15px; height: 15px;background-color: #E5B0FF; display: inline-block;position: relative;  top:3px;">
+                        </div>
+                    </div>
+
+                    <div id="results" style="margin-top: 10px;">
+
+                    </div>
+                </div>
+
+
+
+
+
+                <!-- <div style="height: 160px;"></div> -->
+
+                <!--        </div>-->
+            </div>
+            <p style="width:100%;text-align: center;">
+                <a id="tweet_it"
+                    href="https://twitter.com/intent/tweet?text=Catch%20unicorns%20with%20GLTR(http://gltr.io/dist).&hashtags=GLTR,MITIBM,HarvardNLP">Tweet
+                    about GLTR</a>
+                <br>
+                <a href="https://mitibmwatsonailab.mit.edu/" target="_blank" style="font-weight:700">MIT-IBM Watson AI
+                    lab</a>
+                and <a href="http://nlp.seas.harvard.edu/" target="_blank" style="font-weight:700">Harvard NLP</a>
+                <br>
+                <br>
+                <img src="demo/mit_ibm_heart_black.png" height="100px;">
+
+            </p>
+        </div>
+
+    </div>
+
+
+    <div id="major_tooltip" class='tooltip'
+        style="background: #dddddd;width: 200px; position: fixed;pointer-events: none;opacity: 0;">
+        <div class="predictions" style="display: table;">
+
+        </div>
+
+        <br />
+        <div class="myDetail">
+
+        </div>
+
+
+    </div>
+
+    <!--<div class="side_bar" >-->
+
+
+    <!--&lt;!&ndash;<span style="padding-top: 10px;">Sort Units:</span>&ndash;&gt;-->
+
+
+    <!--<div>-->
+
+
+    <!--&lt;!&ndash;&#10004;&ndash;&gt;-->
+    <!--<label for="rm_unit">ablate first: </label>-->
+    <!--<input type="number" id="rm_unit"-->
+    <!--style="background-color: black; color: white;"-->
+    <!--value="40"-->
+    <!--&gt;-->
+
+    <!--<label for="recipe_select_ablation"> units sorted by:</label>-->
+    <!--<select id="recipe_select_ablation"-->
+    <!--style="margin-top: 5px; color: white;">-->
+    <!--<option value="abc">abc</option>-->
+
+    <!--</select>-->
+    <!--<span class='watch selected' id="watch_ablation">&#128064;</span>-->
+
+    <!--</div>-->
+
+    <!--<div>-->
+    <!--<label for="cp_unit">copy first: </label>-->
+    <!--<input type="number" id="cp_unit"-->
+    <!--style="background-color: black; color: white;"-->
+    <!--value="5">-->
+    <!--<label for="recipe_select_copy"> units sorted by:</label>-->
+    <!--<select id="recipe_select_copy"-->
+    <!--style="margin-top: 5px; color: white;">-->
+    <!--<option value="abc">&#45;&#45;selection&#45;&#45;</option>-->
+
+    <!--</select>-->
+    <!--<span class='watch' id="watch_copy">&#128064;</span>-->
+    <!--</div>-->
+
+    <!--<div style="padding-top: 10px;">Units:</div>-->
+    <!--&lt;!&ndash;<div>&ndash;&gt;-->
+    <!--&lt;!&ndash;<button id="reset_all"> all orig</button>&ndash;&gt;-->
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+    <!--&lt;!&ndash;<div class="detail_img">&ndash;&gt;-->
+
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+    <!--<div id="units"-->
+    <!--style="padding: 20px 30px ;">-->
+
+    <!--</div>-->
+
+    <!--</div>-->
+
+
+    <script src="vendor.js"></script>
+    <script src="start.js"></script>
+
+</body>
+
+</html>

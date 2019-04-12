@@ -1,0 +1,26 @@
+[
+  {
+    "file": "gpt2_small_top5_uncond.json",
+    "description": "machine: GPT-2 small top_k 5 temp 1"
+  },
+  {
+    "file": "gpt_2_small_top40_t0.7.json",
+    "description": "machine: GPT-2 small top_k 40 temp .7"
+  },
+  {
+    "file":   "unicorn.json",
+    "description": "machine*: unicorn text (GPT2 large)"
+  },
+  {
+    "file":   "NYTimes.json",
+    "description": "human: NYTimes article"
+  },
+  {
+    "file":   "paper_gan.json",
+    "description": "human: academic text"
+  },
+  {
+    "file":   "woodchuck.json",
+    "description": "human: woodchuck :)"
+  }
+]

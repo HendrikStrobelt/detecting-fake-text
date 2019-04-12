@@ -1,0 +1,74 @@
+.discreteViolin,.compareVio, .HistogramX, .barchartX {
+  .bar {
+    fill: #666666;
+    opacity: .7;
+
+    transition-duration: .5s;
+
+    &:hover {
+      stroke: #666666;
+      stroke-width: 1px;
+      stroke-dasharray: 2,2 ;
+      //opacity: 1;
+    }
+
+    &.selected{
+      //stroke: #666666;
+      //stroke-width: 1px;
+      //stroke-dasharray: 2,2 ;
+      opacity: 1;
+    }
+  }
+
+  .median {
+    stroke: black;
+    stroke-width: 2px;
+    pointer-events: none;
+
+    transition-duration: .5s;
+
+    text {
+      font-size: 10px;
+      // font-family: "IBM Plex Sans", sans-serif;
+      font-weight: normal;
+      dominant-baseline: middle;
+      text-anchor: start;
+      stroke: none;
+    }
+
+  }
+
+  .quantiles {
+    stroke: transparent;
+    stroke-width: 1px;
+    fill: #dfdfdf;
+    // pointer-events: none;
+    transition-duration: .5s;
+    &:hover{
+      stroke: #666666
+    }
+  }
+
+
+  .sizeLabel {
+    font-size: 10px;
+    // font-family: "IBM Plex Sans", sans-serif;
+    font-weight: bold;
+    // dominant-baseline: middle;
+    text-anchor: middle;
+  }
+
+
+  .label {
+    font-size: 10px;
+    // font-family: "IBM Plex Sans", sans-serif;
+    font-weight: bold;
+    dominant-baseline: middle;
+    text-anchor: middle;
+  }
+
+  .x-axis, .y-axis {
+    font-family: inherit;
+  }
+
+}
