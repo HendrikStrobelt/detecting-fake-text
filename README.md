@@ -72,7 +72,7 @@ re-compilation of front-end:
 > rm -rf client/dist;cd client/src/; npm run build; cd ../..
 ```
 
-##License
+## License
 
 Apache 2
 
