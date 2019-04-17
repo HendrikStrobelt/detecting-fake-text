@@ -48,7 +48,7 @@ optional arguments:
   -h, --help         show this help message and exit
   --model MODEL		 choose either 'gpt-2-small' (default) or 'BERT' or your own
   --nodebug NODEBUG  server in non-debugging mode
-  --port PORT	     port to launch UI and API (default:5001) 
+  --port PORT	     port to launch UI and API (default:5001)
   --no_cors          launch API without CORS support (default: False)
 
 ```
@@ -56,7 +56,10 @@ optional arguments:
 
 ## Extend backend
 
-[TBD]
+The backend defines a number of model api's that can be invoked by the server by starting it with the parameter `--model NAME`. To add a custom model, you need to write your own api in `backend/api.py` and add the decorator `@register_api(name=NAME)`.
+
+Each api needs to be a class that inherits from `AbstractLanguageChecker`, which defines two functions `check_probabilities` and `postprocess`. Please follow the documentation within `api.py` when implementing the class and the functions.
+
 
 ## Extend frontend
 the source code for the front-end is in `client/src`.
