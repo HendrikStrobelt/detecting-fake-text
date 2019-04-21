@@ -1,7 +1,11 @@
 # GLTR: Giant Language Model Test Room
 Detecting text that was generated from large language models (e.g. GPT-2).
 
-![Seq2Seq-Vis](figs/overview.png)
+<a href='http://gltr.io'>
+  <img src='figs/overview.png' >
+</a>
+
+
 
 webpage: [http://gltr.io](http://gltr.io)<br>
 online-demo: [http://gltr.io/dist/index.html](http://gltr.io/dist/index.html)<br>
