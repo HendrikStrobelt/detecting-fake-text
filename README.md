@@ -9,7 +9,7 @@ Detecting text that was generated from large language models (e.g. GPT-2).
 
 webpage: [http://gltr.io](http://gltr.io)<br>
 online-demo: [http://gltr.io/dist/index.html](http://gltr.io/dist/index.html)<br>
-paper: PENDING
+paper: [https://arxiv.org/abs/1906.04043](https://arxiv.org/abs/1906.04043) 
 
 A project by Hendrik Strobelt, Sebastian Gehrmann, Alexander M. Rush.
 
