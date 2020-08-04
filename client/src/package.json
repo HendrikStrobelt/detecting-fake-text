@@ -28,7 +28,7 @@
     "install": "^0.12.1",
     "jquery": "^3.3.1",
     "lodash": "^4.17.4",
-    "npm": "^6.4.1",
+    "npm": "^6.14.6",
     "webcola": "^3.3.6"
   },
   "devDependencies": {
