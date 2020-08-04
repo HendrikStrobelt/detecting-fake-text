@@ -4,6 +4,9 @@ Attn API and Types
 
 import * as d3 from "d3";
 import URLHandler from "../etc/URLHandler";
+import {cleanSpecials} from "../etc/Util";
+
+
 
 export type AnalyzedText = {
     bpe_strings: string[],
@@ -32,7 +35,7 @@ export class GLTR_API {
 
     public analyze(project: string, text: string, bitmask: number[] = null): Promise<AnalyzeResponse> {
         const payload = {
-            project, text
+            project, text: cleanSpecials(text)
         }
         if (bitmask) {
             payload['bitmask'] = bitmask;
