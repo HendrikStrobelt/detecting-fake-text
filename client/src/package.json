@@ -38,7 +38,7 @@
     "file-loader": "^1.1.11",
     "fork-ts-checker-webpack-plugin": "^0.4.1",
     "mini-css-extract-plugin": "^0.4.1",
-    "node-sass": "^4.8.3",
+    "node-sass": "^4.13.1",
     "sass-loader": "^7.0.1",
     "style-loader": "^0.20.3",
     "thread-loader": "^1.1.5",
