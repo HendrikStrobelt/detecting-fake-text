@@ -2,12 +2,12 @@ import numpy as np
 import torch
 import time
 
-from pytorch_pretrained_bert import (GPT2LMHeadModel, GPT2Tokenizer,
-                                     BertTokenizer, BertForMaskedLM)
+from transformers import (GPT2LMHeadModel, GPT2Tokenizer,
+                          BertTokenizer, BertForMaskedLM)
 from .class_register import register_api
 
 
-class AbstractLanguageChecker():
+class AbstractLanguageChecker:
     """
     Abstract Class that defines the Backend API of GLTR.
 
@@ -16,16 +16,16 @@ class AbstractLanguageChecker():
     """
 
     def __init__(self):
-        '''
+        """
         In the subclass, you need to load all necessary components
         for the other functions.
         Typically, this will comprise a tokenizer and a model.
-        '''
+        """
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu")
 
     def check_probabilities(self, in_text, topk=40):
-        '''
+        """
         Function that GLTR interacts with to check the probabilities of words
 
         Params:
@@ -40,7 +40,7 @@ class AbstractLanguageChecker():
         bpe_strings: list of str -- Each individual token in the text
         real_topk: list of tuples -- (ranking, prob) of each token
         pred_topk: list of list of tuple -- (word, prob) for all topk
-        '''
+        """
         raise NotImplementedError
 
     def postprocess(self, token):
@@ -54,10 +54,10 @@ class AbstractLanguageChecker():
 
 
 def top_k_logits(logits, k):
-    '''
+    """
     Filters logits to only the top k choices
     from https://github.com/huggingface/pytorch-pretrained-BERT/blob/master/examples/run_gpt2.py
-    '''
+    """
     if k == 0:
         return logits
     values, _ = torch.topk(logits, k)
@@ -75,51 +75,46 @@ class LM(AbstractLanguageChecker):
         self.model = GPT2LMHeadModel.from_pretrained(model_name_or_path)
         self.model.to(self.device)
         self.model.eval()
-        self.start_token = '<|endoftext|>'
+        self.start_token = self.enc(self.enc.bos_token, return_tensors='pt').data['input_ids'][0]
         print("Loaded GPT-2 model!")
 
     def check_probabilities(self, in_text, topk=40):
         # Process input
-        start_t = torch.full((1, 1),
-                             self.enc.encoder[self.start_token],
-                             device=self.device,
-                             dtype=torch.long)
-        context = self.enc.encode(in_text)
-        context = torch.tensor(context,
-                               device=self.device,
-                               dtype=torch.long).unsqueeze(0)
-        context = torch.cat([start_t, context], dim=1)
+        token_ids = self.enc(in_text, return_tensors='pt').data['input_ids'][0]
+        token_ids = torch.concat([self.start_token, token_ids])
         # Forward through the model
-        logits, _ = self.model(context)
-
+        output = self.model(token_ids.to(self.device))
+        all_logits = output.logits[:-1].detach().squeeze()
         # construct target and pred
-        yhat = torch.softmax(logits[0, :-1], dim=-1)
-        y = context[0, 1:]
+        # yhat = torch.softmax(logits[0, :-1], dim=-1)
+        all_probs = torch.softmax(all_logits, dim=1)
+
+        y = token_ids[1:]
         # Sort the predictions for each timestep
-        sorted_preds = np.argsort(-yhat.data.cpu().numpy())
+        sorted_preds = torch.argsort(all_probs, dim=1, descending=True).cpu()
         # [(pos, prob), ...]
         real_topk_pos = list(
             [int(np.where(sorted_preds[i] == y[i].item())[0][0])
              for i in range(y.shape[0])])
-        real_topk_probs = yhat[np.arange(
+        real_topk_probs = all_probs[np.arange(
             0, y.shape[0], 1), y].data.cpu().numpy().tolist()
         real_topk_probs = list(map(lambda x: round(x, 5), real_topk_probs))
 
         real_topk = list(zip(real_topk_pos, real_topk_probs))
         # [str, str, ...]
-        bpe_strings = [self.enc.decoder[s.item()] for s in context[0]]
+        bpe_strings = self.enc.convert_ids_to_tokens(token_ids[:])
 
         bpe_strings = [self.postprocess(s) for s in bpe_strings]
 
-        # [[(pos, prob), ...], [(pos, prob), ..], ...]
-        pred_topk = [
-            list(zip([self.enc.decoder[p] for p in sorted_preds[i][:topk]],
-                     list(map(lambda x: round(x, 5),
-                              yhat[i][sorted_preds[i][
-                                      :topk]].data.cpu().numpy().tolist()))))
-            for i in range(y.shape[0])]
+        topk_prob_values, topk_prob_inds = torch.topk(all_probs, k=topk, dim=1)
 
+        pred_topk = [list(zip(self.enc.convert_ids_to_tokens(topk_prob_inds[i]),
+                              topk_prob_values[i].data.cpu().numpy().tolist()
+                              )) for i in range(y.shape[0])]
         pred_topk = [[(self.postprocess(t[0]), t[1]) for t in pred] for pred in pred_topk]
+
+
+        # pred_topk = []
         payload = {'bpe_strings': bpe_strings,
                    'real_topk': real_topk,
                    'pred_topk': pred_topk}
@@ -184,7 +179,7 @@ class LM(AbstractLanguageChecker):
         return token
 
 
-@register_api(name='BERT')
+# @register_api(name='BERT')
 class BERTLM(AbstractLanguageChecker):
     def __init__(self, model_name_or_path="bert-base-cased"):
         super(BERTLM, self).__init__()
