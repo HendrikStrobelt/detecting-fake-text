@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra
 
 # from backend.Project import Project # TODO !!
 from backend import AVAILABLE_MODELS
@@ -63,7 +63,7 @@ def get_all_projects():
     return res
 
 
-class AnalyzeRequest(BaseModel):
+class AnalyzeRequest(BaseModel, extra=Extra.forbid):
     project: str
     text: str
 
@@ -106,6 +106,8 @@ async def startup_event():
 #########################
 
 app.mount("/client", StaticFiles(directory='client/dist'), name="client_static")
+
+
 # app.mount("/data", StaticFiles(directory=args.dir), name="data_static")
 
 
