@@ -76,7 +76,7 @@ class LM(AbstractLanguageChecker):
         self.model.to(self.device)
         self.model.eval()
         self.start_token = self.enc(self.enc.bos_token, return_tensors='pt').data['input_ids'][0]
-        print("Loaded GPT-2 model!")
+        print(f"Loaded GPT-2 model! on {self.device}")
 
     def check_probabilities(self, in_text, topk=40):
         # Process input
