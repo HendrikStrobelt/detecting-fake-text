@@ -1,8 +1,10 @@
 # pytorch-pretrained-bert>=0.6.1
-transformers
 torch
+transformers
 numpy
-connexion[swagger-ui]
-flask
-PyYaml
-flask_cors
+fastapi
+uvicorn[standard]
+# connexion[swagger-ui]
+# flask
+# PyYaml
+# flask_cors
