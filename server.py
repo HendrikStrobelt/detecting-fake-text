@@ -105,8 +105,8 @@ async def startup_event():
 #  some non-logic routes
 #########################
 
-app.mount("/client", StaticFiles('client/dist'), name="client_static")
-app.mount("/data", StaticFiles(args.dir), name="data_static")
+app.mount("/client", StaticFiles(directory='client/dist'), name="client_static")
+# app.mount("/data", StaticFiles(directory=args.dir), name="data_static")
 
 
 @app.get('/')
